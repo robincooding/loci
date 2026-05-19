@@ -33,7 +33,7 @@
 
       <!-- 장소 추가 폼 -->
       <div v-if="showPlaceForm" class="place-form">
-        <PlaceSearch @select="handlePlaceSelect" />
+        <PlaceSearch :prefill="prefillSearch" @select="handlePlaceSelect" />
 
         <div class="form-row">
           <div>
@@ -109,7 +109,11 @@
     </section>
 
     <!-- AI 분석 -->
-    <AiProfile :collection-id="collection.id" :initial-profile="collection.profile" />
+    <AiProfile
+      :collection-id="collection.id"
+      :initial-profile="collection.profile"
+      :collection-places="collection.places || []"
+    />
 
     <!-- 장소 상세 모달 -->
     <PlaceModal
@@ -130,9 +134,9 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { getCollection, createPlace, updatePlace, deletePlace } from '../api/index.js'
-import { uploadImage, deleteImage } from '../api/index.js'
+import { uploadImage, deleteImage, removeFromWishlist } from '../api/index.js'
 import MapView from '../components/MapView.vue'
 import PlaceCard from '../components/PlaceCard.vue'
 import PlaceSearch from '../components/PlaceSearch.vue'
@@ -140,6 +144,7 @@ import AiProfile from '../components/AiProfile.vue'
 import PlaceModal from '../components/PlaceModal.vue'
 
 const route = useRoute()
+const router = useRouter()
 const collection = ref(null)
 const showPlaceForm = ref(false)
 const photoUploading = ref(false)
@@ -151,6 +156,13 @@ const sessionUploadKey = ref(null) // 이번 세션에서 새로 업로드한 ph
 
 // 상세 보기 모달
 const viewingPlace = ref(null)
+
+// 위시 → 컬렉션 promote 상태
+//   /collections/:id?prefillName=...&wishId=... 로 진입했을 때
+//   - prefillSearch: PlaceSearch 컴포넌트에 자동완성 prefill
+//   - wishIdToDelete: 장소 추가 성공 후 위시 항목 자동 삭제
+const prefillSearch = ref('')
+const wishIdToDelete = ref(null)
 
 const isEditing = computed(() => editingPlaceId.value !== null)
 
@@ -167,6 +179,19 @@ const placeForm = ref(emptyForm())
 onMounted(async () => {
   const res = await getCollection(route.params.id)
   collection.value = res.data
+
+  // 위시 → 컬렉션 promote 경로로 진입한 경우 자동으로 폼을 열고 검색어 prefill
+  // 쿼리 파라미터는 한 번만 쓰고 URL 에서 제거 (새로고침해도 다시 트리거되지 않도록)
+  const { prefillName, wishId } = route.query
+  if (prefillName) {
+    prefillSearch.value = String(prefillName)
+    if (wishId) wishIdToDelete.value = String(wishId)
+    showPlaceForm.value = true
+    router.replace({ path: route.path }) // 쿼리 제거
+    nextTick(() => {
+      document.querySelector('.place-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }
 })
 
 function handlePlaceSelect(place) {
@@ -199,6 +224,15 @@ async function handleSubmitPlace() {
     }
   } else {
     const res = await createPlace(payload)
+
+    // 위시 promote 였다면 *먼저* 위시 삭제, *그 다음* places 에 push.
+    // 순서 보장 이유: 자식 컴포넌트들이 collection.places 변화에 반응해
+    // 위시를 refetch 할 수도 있어, push 가 먼저면 stale 한 위시 데이터가 잡힐 수 있음.
+    // 실패해도 사용자에겐 노출하지 않음 (장소 추가 자체는 성공한 상태라 흐름 끊지 않음).
+    if (wishIdToDelete.value) {
+      await removeFromWishlist(wishIdToDelete.value).catch(() => {})
+      wishIdToDelete.value = null
+    }
     collection.value.places.push(res.data)
   }
 
@@ -247,6 +281,7 @@ function resetForm() {
   editingPlaceId.value = null
   originalPhotoKey.value = null
   sessionUploadKey.value = null
+  prefillSearch.value = ''
   placeForm.value = emptyForm()
 }
 
@@ -255,6 +290,8 @@ function handleCancelForm() {
   if (sessionUploadKey.value && sessionUploadKey.value !== originalPhotoKey.value) {
     deleteImage(sessionUploadKey.value).catch(() => {})
   }
+  // 위시 promote 경로로 들어왔다가 취소한 경우엔 위시 항목을 유지 (다음 기회에 다시 시도 가능)
+  wishIdToDelete.value = null
   resetForm()
 }
 

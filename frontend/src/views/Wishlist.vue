@@ -28,26 +28,51 @@
           </p>
           <p class="wish-meta">담은 날: {{ formatDate(it.createdAt) }}</p>
         </div>
-        <button
-          class="wish-remove"
-          aria-label="제거"
-          :disabled="removing === it.id"
-          @click="handleRemove(it)"
-        >
-          {{ removing === it.id ? '…' : '✕' }}
-        </button>
+        <div class="wish-actions">
+          <button
+            class="wish-visited"
+            :disabled="removing === it.id"
+            @click="handleVisited(it)"
+          >
+            다녀왔어요
+          </button>
+          <button
+            class="wish-remove"
+            aria-label="제거"
+            :disabled="removing === it.id"
+            @click="handleRemove(it)"
+          >
+            {{ removing === it.id ? '…' : '✕' }}
+          </button>
+        </div>
       </li>
     </ul>
+
+    <CollectionPicker
+      v-if="pickerItem"
+      :place-name="displayName(pickerItem)"
+      @select="handlePickCollection"
+      @create-new="handleCreateNewCollection"
+      @close="pickerItem = null"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { getWishlist, removeFromWishlist } from '../api/index.js'
+import CollectionPicker from '../components/CollectionPicker.vue'
 
+const router = useRouter()
 const items = ref([])
 const loading = ref(true)
 const removing = ref(null)
+
+// "다녀왔어요" 흐름: 클릭한 위시 항목을 임시로 보관 → CollectionPicker 모달에서 컬렉션 선택 →
+// /collections/:id?prefillName=...&wishId=... 로 이동해 CollectionDetail 이 자동으로 폼을 열고
+// 추가 성공 후 위시 항목을 자동 삭제한다 (WP-2 에서 구현).
+const pickerItem = ref(null)
 
 onMounted(async () => {
   try {
@@ -80,6 +105,29 @@ async function handleRemove(it) {
   } finally {
     removing.value = null
   }
+}
+
+function handleVisited(it) {
+  pickerItem.value = it
+}
+
+function handlePickCollection(collectionId) {
+  // CollectionDetail 이 query 로 prefillName/wishId 를 받아 자동으로 폼을 열고
+  // 추가 성공 시 wishId 항목을 삭제한다.
+  router.push({
+    path: `/collections/${collectionId}`,
+    query: { prefillName: displayName(pickerItem.value), wishId: pickerItem.value.id },
+  })
+  pickerItem.value = null
+}
+
+function handleCreateNewCollection() {
+  // 새 컬렉션 만들기 — 컬렉션 생성 후엔 CollectionList 로 돌아가야 직관적이라
+  //   ① 위시 항목 정보는 일단 잃는다 (CollectionForm 에서 곧장 detail 로 이동하지 않음)
+  //   ② 사용자가 새 컬렉션을 만들고 다시 위시로 돌아와 "다녀왔어요" 를 누르는 흐름
+  // 향후 CollectionForm 까지 query 를 전달해 흐름을 이어주는 개선 여지 있음.
+  router.push('/collections/new')
+  pickerItem.value = null
 }
 </script>
 
@@ -145,6 +193,30 @@ async function handleRemove(it) {
   font-size: 11.5px;
   color: var(--faint);
 }
+
+.wish-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.wish-visited {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  background: var(--ink);
+  color: #fff;
+  border: 1px solid var(--ink);
+  border-radius: 100px;
+  padding: 6px 14px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: opacity 0.15s, background 0.15s;
+}
+.wish-visited:hover:not(:disabled) {
+  opacity: 0.85;
+}
+.wish-visited:disabled { opacity: 0.4; cursor: default; }
 
 .wish-remove {
   background: none;

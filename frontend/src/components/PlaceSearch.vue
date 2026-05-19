@@ -23,14 +23,30 @@
 </template>
 
 <script setup>
-import { ref, markRaw } from 'vue'
+import { ref, markRaw, watch } from 'vue'
 
+const props = defineProps({
+  // 외부 (위시 → 컬렉션 promote 등) 에서 검색어 prefill
+  prefill: { type: String, default: '' },
+})
 const emit = defineEmits(['select'])
 const query = ref('')
 const suggestions = ref([])
 let debounceTimer = null
 // 같은 사용자 세션 안에서 token 을 공유해야 자동완성 + 상세 조회가 1건 청구로 묶임 (비용 절감)
 let sessionToken = null
+
+// prefill 변경 시 query 갱신 + 즉시 자동완성 트리거
+watch(
+  () => props.prefill,
+  (val) => {
+    if (val) {
+      query.value = val
+      handleInput()
+    }
+  },
+  { immediate: true },
+)
 
 function loadGoogleMaps() {
   if (window.google?.maps?.importLibrary) return Promise.resolve()
