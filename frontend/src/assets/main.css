@@ -9,6 +9,10 @@
   --font-serif: 'Georgia', 'Noto Serif KR', 'Apple SD Gothic Neo', serif;
   --font-sans: 'Pretendard', 'Helvetica Neue', 'Apple SD Gothic Neo', system-ui, sans-serif;
 
+  /* ── Light theme (default) ─────────────────────
+   * Loci 의 톤은 따뜻한 오프화이트 — 색온도는 노란기 살짝 (#fafaf8).
+   * 다크 모드도 동일한 따뜻한 톤을 유지해 일관된 분위기 (cold blue 회피).
+   */
   --ink: #111;
   --text: #1a1a1a;
   --muted: #555;
@@ -18,6 +22,58 @@
   --hairline-strong: rgba(0, 0, 0, 0.18);
   --bg: #fafaf8;
   --card: #ffffff;
+
+  /* 파생 변수 — 하드코딩되어 있던 색을 변수화 */
+  --ink-contrast: #ffffff;            /* ink 색 위의 텍스트 (primary 버튼 등) */
+  --ink-hover: #333;                  /* ink 색 hover */
+  --surface-hover: rgba(0, 0, 0, 0.02); /* subtle 호버 배경 */
+  --shadow-card: 0 6px 24px rgba(0, 0, 0, 0.06);
+  --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.25);
+  --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.04); /* 카드/폼의 옅은 elevation */
+  --nav-bg: rgba(250, 250, 248, 0.85); /* sticky nav 반투명 */
+  --overlay-light: rgba(255, 255, 255, 0.92); /* 모달 닫기 버튼 등 */
+
+  /* 의미 색상 — 두 테마에서 톤만 살짝 조정 */
+  --danger-text: #c66;
+  --danger-bg: rgba(220, 100, 100, 0.06);
+  --danger-border: rgba(220, 100, 100, 0.25);
+  --success-text: #2d8a4f;
+  --success-bg: rgba(45, 138, 79, 0.06);
+  --success-border: rgba(45, 138, 79, 0.25);
+}
+
+/* ── Dark theme ────────────────────────────────
+ * 트리거: <html data-theme="dark"> (index.html 의 inline script 가 첫 렌더 전 적용)
+ * 디자인 의도: 따뜻한 dark — 다크룸 / 가죽 노트의 결.
+ *   bg/card 대비를 살짝 줘 카드가 들떠 보이도록.
+ */
+[data-theme="dark"] {
+  --ink: #f5f3ed;
+  --text: #e8e6df;
+  --muted: #a8a6a0;
+  --soft: #7a7872;
+  --faint: #52514c;
+  --hairline: rgba(255, 255, 255, 0.08);
+  --hairline-strong: rgba(255, 255, 255, 0.2);
+  --bg: #15140f;
+  --card: #1f1e18;
+
+  --ink-contrast: #15140f;
+  --ink-hover: #dcdad2;
+  --surface-hover: rgba(255, 255, 255, 0.04);
+  --shadow-card: 0 6px 24px rgba(0, 0, 0, 0.4);
+  --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.6);
+  --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.3);
+  --nav-bg: rgba(21, 20, 15, 0.85);
+  --overlay-light: rgba(40, 38, 32, 0.92);
+
+  /* 다크에선 같은 의미색이라도 채도/명도를 살짝 올려 가독성 보장 */
+  --danger-text: #f08080;
+  --danger-bg: rgba(220, 100, 100, 0.12);
+  --danger-border: rgba(220, 100, 100, 0.35);
+  --success-text: #6fb88a;
+  --success-bg: rgba(45, 138, 79, 0.14);
+  --success-border: rgba(45, 138, 79, 0.4);
 }
 
 * {
@@ -47,7 +103,7 @@ a { color: inherit; }
   font-family: var(--font-sans);
   font-size: 13px;
   background: var(--ink);
-  color: #fff;
+  color: var(--ink-contrast);
   padding: 12px 28px;
   border-radius: 100px;
   text-decoration: none;
@@ -58,7 +114,7 @@ a { color: inherit; }
   display: inline-block;
 }
 .btn-primary:hover {
-  background: #333;
+  background: var(--ink-hover);
   transform: translateY(-1px);
 }
 
@@ -69,7 +125,7 @@ a { color: inherit; }
   color: var(--muted);
   padding: 12px 28px;
   border-radius: 100px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--hairline-strong);
   text-decoration: none;
   cursor: pointer;
   letter-spacing: 0.02em;
@@ -78,14 +134,14 @@ a { color: inherit; }
 }
 .btn-ghost:hover {
   color: var(--ink);
-  border-color: rgba(0, 0, 0, 0.35);
+  border-color: var(--ink);
 }
 
 .btn-new {
   font-family: var(--font-sans);
   font-size: 12px;
   background: var(--ink);
-  color: #fff;
+  color: var(--ink-contrast);
   padding: 10px 20px;
   border-radius: 100px;
   text-decoration: none;
@@ -96,7 +152,7 @@ a { color: inherit; }
   white-space: nowrap;
   display: inline-block;
 }
-.btn-new:hover { background: #333; }
+.btn-new:hover { background: var(--ink-hover); }
 
 /* ── 공통 섹션 레이블 ── */
 .section-label {
@@ -128,7 +184,7 @@ a { color: inherit; }
 .btn-secondary:hover {
   color: var(--ink);
   border-color: var(--ink);
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--surface-hover);
 }
 
 .btn-tiny {
@@ -191,7 +247,7 @@ a { color: inherit; }
 .form-textarea:focus {
   outline: none;
   border-color: var(--ink);
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 0 0 3px var(--surface-hover);
 }
 .form-input::placeholder,
 .form-textarea::placeholder {
@@ -228,7 +284,7 @@ a { color: inherit; }
 .chip.is-active {
   background: var(--ink);
   border-color: var(--ink);
-  color: #fff;
+  color: var(--ink-contrast);
 }
 
 /* ── 정적 라벨 (읽기 전용 chip) ── */
@@ -321,8 +377,42 @@ a { color: inherit; }
 }
 .state-icon {
   font-size: 1.75rem;
-  color: #d4d4d0;
+  color: var(--faint);
   margin-bottom: 0.25rem;
+}
+
+/* 로딩 점 3개 — 비동기 대기 인디케이터 (전역 공통)
+   사용: <div class="loading-dots"><span></span><span></span><span></span></div> */
+.loading-dots {
+  display: flex;
+  gap: 6px;
+}
+.loading-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--faint);
+  animation: loadingDotsPulse 1.2s ease-in-out infinite;
+}
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes loadingDotsPulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50%      { opacity: 1;   transform: scale(1); }
+}
+
+/* 인증 페이지 공통 카드 — Login/Register/Forgot/Reset 의 동일한 form 박스
+   기존엔 4개 파일에 같은 스타일을 복붙해서 정의함 → 한 곳에서 관리 */
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--card);
+  border: 1px solid var(--hairline);
+  border-radius: 18px;
+  padding: 2.5rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-soft);
 }
 
 /* ── word mark ── */

@@ -119,7 +119,7 @@ onUnmounted(() => {
   overscroll-behavior: contain;
   background: var(--card);
   border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-modal);
   animation: modalSlideUp 0.25s ease;
 }
 @keyframes modalSlideUp {
@@ -137,7 +137,7 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--overlay-light);
   border: 1px solid var(--hairline);
   border-radius: 100px;
   font-size: 13px;
@@ -149,7 +149,7 @@ onUnmounted(() => {
 .modal-close:hover {
   color: var(--ink);
   border-color: var(--hairline-strong);
-  background: #fff;
+  background: var(--card);
 }
 
 .picker-body {
@@ -213,7 +213,7 @@ onUnmounted(() => {
   transition: background 0.15s;
 }
 .picker-item:hover {
-  background: rgba(0, 0, 0, 0.025);
+  background: var(--surface-hover);
 }
 .picker-item-main {
   display: flex;
@@ -274,21 +274,5 @@ onUnmounted(() => {
 }
 .picker-cancel:hover { color: var(--ink); }
 
-.loading-dots {
-  display: flex;
-  gap: 6px;
-}
-.loading-dots span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #ccc;
-  animation: pulse 1.2s ease-in-out infinite;
-}
-.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes pulse {
-  0%, 100% { opacity: 0.3; transform: scale(0.8); }
-  50%      { opacity: 1;   transform: scale(1); }
-}
+/* .loading-dots 는 main.css 의 전역 클래스 사용 */
 </style>

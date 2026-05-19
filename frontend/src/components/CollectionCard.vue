@@ -41,7 +41,7 @@ defineEmits(['delete'])
 }
 .collection-card:hover {
   border-color: var(--hairline-strong);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-card);
   transform: translateY(-2px);
 }
 
@@ -66,11 +66,12 @@ defineEmits(['delete'])
   border: none;
   cursor: pointer;
   font-size: 14px;
-  color: #c8c8c8;
+  color: var(--faint);
   padding: 0 4px;
   line-height: 1;
   transition: color 0.2s;
 }
+/* 삭제 hover — 빨간색은 의미 색이라 양 테마에서 동일하게 유지 */
 .card-delete:hover { color: #e57373; }
 
 .card-title {
@@ -120,7 +121,7 @@ defineEmits(['delete'])
 .card-arrow {
   font-family: var(--font-sans);
   font-size: 15px;
-  color: #c0c0c0;
+  color: var(--faint);
   transition: color 0.2s, transform 0.2s;
 }
 .collection-card:hover .card-arrow {

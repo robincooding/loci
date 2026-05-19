@@ -121,17 +121,7 @@ async function handleSubmit() {
   padding: 3rem 1.25rem;
   background: var(--bg);
 }
-.auth-card {
-  width: 100%;
-  max-width: 420px;
-  background: var(--card);
-  border: 1px solid var(--hairline);
-  border-radius: 18px;
-  padding: 2.5rem 2rem 2rem;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
-}
+/* .auth-card 는 main.css 의 전역 클래스 사용 */
 .auth-logo-link {
   display: flex;
   justify-content: center;
@@ -173,9 +163,9 @@ async function handleSubmit() {
 .auth-error {
   font-family: var(--font-sans);
   font-size: 13px;
-  color: #c66;
-  background: rgba(220, 100, 100, 0.06);
-  border: 1px solid rgba(220, 100, 100, 0.18);
+  color: var(--danger-text);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
   border-radius: 8px;
   padding: 0.6rem 0.85rem;
   line-height: 1.5;

@@ -205,7 +205,7 @@ function handleCreateNewCollection() {
   font-family: var(--font-sans);
   font-size: 12px;
   background: var(--ink);
-  color: #fff;
+  color: var(--ink-contrast);
   border: 1px solid var(--ink);
   border-radius: 100px;
   padding: 6px 14px;

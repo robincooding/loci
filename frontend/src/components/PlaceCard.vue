@@ -106,7 +106,7 @@ const firstPhoto = computed(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--overlay-light);
   backdrop-filter: blur(4px);
   border: 1px solid var(--hairline);
   border-radius: 100px;
@@ -119,15 +119,16 @@ const firstPhoto = computed(() => {
 .place-action-btn:hover {
   color: var(--ink);
   border-color: var(--hairline-strong);
-  background: #fff;
+  background: var(--card);
 }
+/* 삭제 hover — 빨간색은 의미 색이라 양 테마 동일 */
 .place-action-btn--delete:hover {
   color: #e57373;
   border-color: #e57373;
 }
 .place-card:hover {
   border-color: var(--hairline-strong);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-card);
   transform: translateY(-1px);
 }
 

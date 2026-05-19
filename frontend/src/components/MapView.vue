@@ -75,6 +75,7 @@ async function initMap() {
 
   // Note: when mapId is set, map styling is controlled via Google Cloud Console
   // (Map Styles associated with the mapId), not via the styles property here.
+  // mapId 는 AdvancedMarkerElement 가 필수로 요구하므로 유지해야 함.
   map = new Map(mapEl.value, {
     center,
     zoom: 13,
@@ -123,11 +124,18 @@ onUnmounted(() => {
   height: 340px;
   border-radius: 16px;
   overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.07);
+  border: 1px solid var(--hairline);
   margin-bottom: 1.5rem;
 }
 </style>
 
+<!--
+  ⓘ 지도 타일은 mapId 가 설정되어 있어 코드의 styles 옵션이 적용되지 않음
+    (mapId 사용 시 styling 은 Google Cloud Console 의 Map Styles 로만 가능).
+    그리고 mapId 는 AdvancedMarkerElement 의 필수 요구사항이라 뺄 수 없음.
+    → 다크 모드에서도 지도는 light 톤을 유지. 그에 맞춰 마커 카드도 light 고정.
+    (다크 지도가 정말 필요하면 light/dark 두 mapId 를 Cloud Console 에 등록하는 길이 정공법)
+-->
 <style>
 .loci-marker {
   position: relative;

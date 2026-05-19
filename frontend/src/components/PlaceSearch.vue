@@ -166,7 +166,7 @@ function getCategory(types) {
   background: var(--card);
   border: 1px solid var(--hairline);
   border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card);
   max-height: 240px;
   overflow-y: auto;
   list-style: none;
@@ -178,7 +178,7 @@ function getCategory(types) {
   transition: background 0.15s;
 }
 .suggestion-item:last-child { border-bottom: none; }
-.suggestion-item:hover { background: rgba(0, 0, 0, 0.02); }
+.suggestion-item:hover { background: var(--surface-hover); }
 
 .suggestion-main {
   font-family: var(--font-sans);

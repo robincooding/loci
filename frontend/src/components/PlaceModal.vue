@@ -142,12 +142,12 @@ onUnmounted(() => {
   overscroll-behavior: contain;
   background: var(--card);
   border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-modal);
   animation: modalSlideUp 0.25s ease;
 
   /* Firefox */
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  scrollbar-color: var(--hairline-strong) transparent;
 }
 /* WebKit (Chrome / Safari) — 둥근 border-radius 와 어울리는 얇고 은은한 스크롤바 */
 .modal-dialog::-webkit-scrollbar {
@@ -157,11 +157,11 @@ onUnmounted(() => {
   background: transparent;
 }
 .modal-dialog::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.18);
+  background: var(--hairline-strong);
   border-radius: 100px;
 }
 .modal-dialog::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.32);
+  background: var(--soft);
 }
 @keyframes modalSlideUp {
   from { opacity: 0; transform: translateY(12px); }
@@ -178,7 +178,7 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--overlay-light);
   backdrop-filter: blur(4px);
   border: 1px solid var(--hairline);
   border-radius: 100px;
@@ -191,7 +191,7 @@ onUnmounted(() => {
 .modal-close:hover {
   color: var(--ink);
   border-color: var(--hairline-strong);
-  background: #fff;
+  background: var(--card);
 }
 
 .modal-photo {
@@ -317,17 +317,17 @@ onUnmounted(() => {
   font-family: var(--font-sans);
   font-size: 13px;
   background: transparent;
-  color: #c66;
+  color: var(--danger-text);
   padding: 9px 18px;
   border-radius: 100px;
-  border: 1px solid #f0d0d0;
+  border: 1px solid var(--danger-border);
   cursor: pointer;
   letter-spacing: 0.02em;
   transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
 .modal-action-delete:hover {
-  color: #b04848;
-  border-color: #e0a8a8;
-  background: rgba(220, 100, 100, 0.04);
+  color: var(--danger-text);
+  border-color: var(--danger-text);
+  background: var(--danger-bg);
 }
 </style>

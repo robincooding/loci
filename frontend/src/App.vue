@@ -24,6 +24,9 @@
             <RouterLink to="/login" class="app-nav-link" active-class="is-active">로그인</RouterLink>
             <RouterLink to="/register" class="app-nav-link app-nav-link-cta" active-class="is-active">회원가입</RouterLink>
           </template>
+
+          <!-- 테마 토글 — 항상 노출 (인증 여부 무관) -->
+          <ThemeToggle />
         </div>
       </div>
     </nav>
@@ -38,6 +41,7 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import LociLogo from './components/LociLogo.vue'
+import ThemeToggle from './components/ThemeToggle.vue'
 import { useAuth } from './stores/auth'
 
 const route = useRoute()
@@ -67,9 +71,9 @@ async function handleLogout() {
   position: sticky;
   top: 0;
   z-index: 40;
-  background: rgba(250, 250, 248, 0.85);
+  background: var(--nav-bg);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid var(--hairline);
 }
 .app-nav-inner {
   max-width: 920px;

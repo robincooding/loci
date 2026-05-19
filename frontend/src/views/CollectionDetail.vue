@@ -422,23 +422,7 @@ function handleRemovePhoto() {
   gap: 10px;
 }
 
-.loading-dots {
-  display: flex;
-  gap: 6px;
-}
-.loading-dots span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #ccc;
-  animation: pulse 1.2s ease-in-out infinite;
-}
-.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes pulse {
-  0%, 100% { opacity: 0.3; transform: scale(0.8); }
-  50%      { opacity: 1;   transform: scale(1); }
-}
+/* .loading-dots 는 main.css 의 전역 클래스 사용 */
 
 .photo-upload { margin-top: 0.25rem; }
 
@@ -457,6 +441,7 @@ function handleRemovePhoto() {
   object-fit: cover;
 }
 
+/* 사진 위에 얹히는 X 버튼 — 사진 자체 색에 상관없이 보이도록 양 테마 모두 검은 반투명 + 흰 텍스트 유지 (의도적) */
 .photo-remove {
   position: absolute;
   top: 4px;
@@ -490,7 +475,7 @@ function handleRemovePhoto() {
 
 .photo-input-label:hover {
   border-color: var(--ink);
-  background: rgba(0,0,0,0.02);
+  background: var(--surface-hover);
 }
 
 .photo-input-text {

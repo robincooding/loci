@@ -258,7 +258,7 @@ async function handleGenerate() {
 .ai-theme {
   align-self: flex-start;
   background: var(--ink);
-  color: #fff;
+  color: var(--ink-contrast);
   border-color: var(--ink);
 }
 .ai-summary {
@@ -289,7 +289,7 @@ async function handleGenerate() {
   margin-top: 0.6rem;
   font-family: var(--font-sans);
   font-size: 12px;
-  color: #c66;
+  color: var(--danger-text);
 }
 
 /* 추천 chip — button 으로 변환 */
@@ -310,7 +310,7 @@ async function handleGenerate() {
 .tag-rec:hover:not(:disabled) {
   border-color: var(--ink);
   color: var(--ink);
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--surface-hover);
 }
 .tag-rec:disabled {
   cursor: default;
@@ -330,17 +330,17 @@ async function handleGenerate() {
 }
 .tag-rec:hover:not(:disabled) .rec-state {
   background: var(--ink);
-  color: #fff;
+  color: var(--ink-contrast);
 }
 /* 이미 위시에 추가된 chip — 살짝 강조 + 체크 표시 */
 .tag-rec.is-wished {
-  border-color: rgba(45, 138, 79, 0.35);
-  color: #2d8a4f;
-  background: rgba(45, 138, 79, 0.04);
+  border-color: var(--success-border);
+  color: var(--success-text);
+  background: var(--success-bg);
 }
 .tag-rec.is-wished .rec-state {
-  background: #2d8a4f;
-  color: #fff;
+  background: var(--success-text);
+  color: var(--ink-contrast);
 }
 
 /* 이미 이 컬렉션에 추가된 chip — 회색 톤 ("완료" 상태) */
@@ -354,7 +354,7 @@ async function handleGenerate() {
 }
 .tag-rec.is-collected .rec-state {
   background: var(--faint);
-  color: #fff;
+  color: var(--ink-contrast);
   font-size: 9px;
 }
 

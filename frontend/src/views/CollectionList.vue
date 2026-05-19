@@ -1,10 +1,10 @@
 <template>
-  <div class="collections-page">
+  <div class="page">
 
     <div class="page-header">
       <div class="header-left">
-        <p class="header-label">Archive</p>
-        <h1 class="header-title">내 아카이브</h1>
+        <p class="page-eyebrow">Archive</p>
+        <h1 class="page-title">내 아카이브</h1>
       </div>
       <RouterLink to="/collections/new" class="btn-new">+ 새 컬렉션</RouterLink>
     </div>
@@ -43,15 +43,15 @@
     </div>
 
     <!-- 첫 페이지 로딩 중 -->
-    <div v-if="initialLoading" class="state-empty">
+    <div v-if="initialLoading" class="state-block">
       <div class="loading-dots">
         <span></span><span></span><span></span>
       </div>
     </div>
 
     <!-- 결과 없음 -->
-    <div v-else-if="collections.length === 0" class="state-empty">
-      <p class="empty-icon">◎</p>
+    <div v-else-if="collections.length === 0" class="state-block">
+      <p class="state-icon">◎</p>
       <p class="empty-title">{{ isFiltering ? '조건에 맞는 컬렉션이 없어요' : '아직 컬렉션이 없어요' }}</p>
       <p class="empty-sub">
         {{ isFiltering ? '검색어 / 필터를 바꿔보세요.' : '좋았던 장소들을 첫 컬렉션에 담아보세요.' }}
@@ -174,12 +174,8 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.collections-page {
-  max-width: 920px;
-  margin: 0 auto;
-  padding: 3rem 1.5rem 6rem;
-  font-family: var(--font-serif);
-}
+/* .page / .page-eyebrow / .page-title 은 main.css 의 전역 클래스 사용 */
+
 .page-header {
   display: flex;
   align-items: flex-end;
@@ -187,22 +183,7 @@ onUnmounted(() => {
   gap: 1rem;
   margin-bottom: 1.75rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-}
-.header-label {
-  font-family: var(--font-sans);
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--faint);
-  margin-bottom: 0.5rem;
-}
-.header-title {
-  font-family: var(--font-serif);
-  font-size: clamp(1.6rem, 3vw, 2rem);
-  font-weight: 500;
-  color: var(--ink);
-  letter-spacing: -0.005em;
+  border-bottom: 1px solid var(--hairline);
 }
 
 /* ── 검색 / 필터 ── */
@@ -238,7 +219,7 @@ onUnmounted(() => {
 .search-input:focus {
   outline: none;
   border-color: var(--ink);
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 0 0 3px var(--surface-hover);
 }
 .search-input::placeholder { color: var(--faint); }
 
@@ -271,20 +252,7 @@ onUnmounted(() => {
   color: var(--faint);
 }
 
-/* ── 빈 상태 / 로딩 ── */
-.state-empty {
-  padding: 6rem 0;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-}
-.empty-icon {
-  font-size: 2rem;
-  color: #d4d4d0;
-  margin-bottom: 0.5rem;
-}
+/* ── 빈 상태 (.state-block / .state-icon / .loading-dots 는 main.css 전역) ── */
 .empty-title {
   font-family: var(--font-serif);
   font-size: 1.15rem;
@@ -296,23 +264,6 @@ onUnmounted(() => {
   font-size: 13px;
   color: var(--soft);
   margin-bottom: 0.75rem;
-}
-.loading-dots {
-  display: flex;
-  gap: 6px;
-}
-.loading-dots span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #ccc;
-  animation: pulse 1.2s ease-in-out infinite;
-}
-.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes pulse {
-  0%, 100% { opacity: 0.3; transform: scale(0.8); }
-  50%      { opacity: 1;   transform: scale(1); }
 }
 
 @media (max-width: 480px) {

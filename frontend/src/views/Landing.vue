@@ -7,9 +7,12 @@
         <RouterLink to="/" class="nav-logo-link" aria-label="Loci 홈">
           <LociLogo class="nav-logo" />
         </RouterLink>
-        <RouterLink :to="isAuthenticated ? '/collections' : '/login'" class="nav-link">
-          {{ isAuthenticated ? '아카이브 보기 →' : '로그인 →' }}
-        </RouterLink>
+        <div class="nav-right">
+          <RouterLink :to="isAuthenticated ? '/collections' : '/login'" class="nav-link">
+            {{ isAuthenticated ? '아카이브 보기 →' : '로그인 →' }}
+          </RouterLink>
+          <ThemeToggle />
+        </div>
       </div>
     </nav>
 
@@ -147,6 +150,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import LociLogo from '../components/LociLogo.vue'
+import ThemeToggle from '../components/ThemeToggle.vue'
 import { useAuth } from '../stores/auth'
 
 const { isAuthenticated } = useAuth()
@@ -277,9 +281,9 @@ onUnmounted(() => {
   gap: 14px;
   padding: 14px 10px;
   border-radius: 100px;
-  background: rgba(250, 250, 248, 0.7);
+  background: var(--nav-bg);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--hairline);
 }
 .section-dot {
   position: relative;
@@ -287,7 +291,7 @@ onUnmounted(() => {
   height: 9px;
   padding: 0;
   border-radius: 50%;
-  border: 1px solid rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--hairline-strong);
   background: transparent;
   cursor: pointer;
   transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
@@ -311,10 +315,10 @@ onUnmounted(() => {
   letter-spacing: 0.05em;
   color: var(--ink);
   white-space: nowrap;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--overlay-light);
   padding: 4px 10px;
   border-radius: 6px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--hairline);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
@@ -332,9 +336,9 @@ onUnmounted(() => {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 50;
-  background: rgba(250, 250, 248, 0.85);
+  background: var(--nav-bg);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid var(--hairline);
 }
 .nav-inner {
   max-width: 920px;
@@ -353,6 +357,12 @@ onUnmounted(() => {
 }
 .nav-logo-link:hover { opacity: 0.7; }
 .nav-logo { height: 28px; }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
 
 .nav-link {
   font-family: var(--font-sans);
@@ -381,8 +391,8 @@ onUnmounted(() => {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+    linear-gradient(var(--hairline) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hairline) 1px, transparent 1px);
   background-size: 48px 48px;
   pointer-events: none;
 }
@@ -397,13 +407,13 @@ onUnmounted(() => {
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.01em;
-  color: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(0, 0, 0, 0.16);
+  color: var(--muted);
+  border: 1px solid var(--hairline-strong);
   padding: 5px 12px;
   border-radius: 100px;
   white-space: nowrap;
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  background: var(--overlay-light);
+  box-shadow: var(--shadow-soft);
   backdrop-filter: blur(2px);
   animation: floatUp linear infinite;
 }
@@ -544,11 +554,11 @@ onUnmounted(() => {
   100% { transform: scaleY(1); transform-origin: bottom; opacity: 0; }
 }
 
-/* 브랜드 소개 */
+/* 브랜드 소개 — bg 와 살짝 다른 톤으로 elevation 표현 */
 .brand-section {
   min-height: 100vh;
   padding: 7rem 1.5rem;
-  background: #f3f1ec;
+  background: var(--card);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -563,12 +573,12 @@ onUnmounted(() => {
   left: 50%;
   width: 1px;
   height: 48px;
-  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.18));
+  background: linear-gradient(to bottom, transparent, var(--hairline-strong));
 }
 .brand-section::before { top: 0; }
 .brand-section::after {
   bottom: 0;
-  background: linear-gradient(to top, transparent, rgba(0, 0, 0, 0.18));
+  background: linear-gradient(to top, transparent, var(--hairline-strong));
 }
 
 .brand-inner {
@@ -637,7 +647,7 @@ onUnmounted(() => {
 .brand-statement strong {
   font-weight: 500;
   color: var(--ink);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid var(--hairline-strong);
   padding-bottom: 1px;
 }
 
@@ -668,8 +678,8 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
-  background: rgba(0, 0, 0, 0.07);
-  border: 1px solid rgba(0, 0, 0, 0.07);
+  background: var(--hairline);
+  border: 1px solid var(--hairline);
 }
 @media (max-width: 720px) {
   .features-grid { grid-template-columns: 1fr; }
@@ -684,7 +694,7 @@ onUnmounted(() => {
 .feature-num {
   font-family: var(--font-sans);
   font-size: 11px;
-  color: #ccc;
+  color: var(--faint);
   letter-spacing: 0.1em;
 }
 .feature-icon {
@@ -705,11 +715,16 @@ onUnmounted(() => {
   line-height: 1.7;
 }
 
-/* CTA — footer 와 합쳐 한 viewport 내에 들어가도록 footer 높이만큼 빼서 계산 */
+/* CTA + 푸터 — "역상 섹션" 패턴
+ * Loci 의 디자인 의도: 페이지 끝에 본문 톤과 강한 대비를 주는 한 화면.
+ * 양 테마에서 모두 이 효과를 유지하려면 항상 본문 ink 색을 배경으로 깔고
+ * ink-contrast 색을 텍스트로 씀 (light 모드 = 검정 배경+흰 텍스트, dark 모드 = 밝은 배경+어두운 텍스트).
+ * 결과: 어느 모드에서 봐도 CTA 섹션이 강한 대비 면으로 작동.
+ */
 .cta-section {
   min-height: calc(100vh - 120px);
   padding: 6rem 1.5rem;
-  background: #111;
+  background: var(--ink);
   text-align: center;
   display: flex;
   align-items: center;
@@ -724,7 +739,7 @@ onUnmounted(() => {
   font-family: var(--font-serif);
   font-size: clamp(2.1rem, 4.5vw, 3.4rem);
   font-weight: 500;
-  color: #f5f5f0;
+  color: var(--ink-contrast);
   line-height: 1.4;
   margin-bottom: 1.25rem;
   letter-spacing: -0.005em;
@@ -732,21 +747,22 @@ onUnmounted(() => {
 .cta-sub {
   font-family: var(--font-sans);
   font-size: 15.5px;
-  color: #aaa;
+  /* 역상 위 보조 텍스트 — ink-contrast 를 70% 정도로 띄움 (현재 mix-blend 안 쓰고 단순화) */
+  color: var(--ink-contrast);
+  opacity: 0.65;
   margin-bottom: 2.5rem;
 }
 .cta-btn {
-  background: #f5f5f0;
+  background: var(--ink-contrast);
   color: var(--ink);
 }
-.cta-btn:hover { background: #fff; }
+.cta-btn:hover { background: var(--ink-contrast); opacity: 0.9; }
 
-/* 푸터 — CTA 섹션과 같은 snap viewport 안에 시각적으로 연결되도록 snap 대상에서 제외.
-   footer-logo 가 32px 로 커지면서 같이 커지지 않도록 vertical padding/gap 을 다이어트 */
+/* 푸터 — CTA 와 동일한 역상 톤 */
 .loci-footer {
   padding: 1.4rem 1.5rem 1.4rem;
-  background: #111;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--ink);
+  border-top: 1px solid var(--hairline);
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -756,12 +772,14 @@ onUnmounted(() => {
 .footer-logo {
   display: inline-block;
   height: 32px;
-  color: rgba(245, 245, 240, 0.55);
+  color: var(--ink-contrast);
+  opacity: 0.55;
 }
 .footer-copy {
   font-family: var(--font-sans);
   font-size: 12px;
-  color: #888;
+  color: var(--ink-contrast);
+  opacity: 0.5;
   letter-spacing: 0.05em;
 }
 </style>

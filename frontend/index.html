@@ -12,6 +12,23 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
   <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
+
+  <!-- ── FOUC (Flash of Unstyled Content) 방지 ─────────────────────────
+       Vue 가 부팅된 후에 다크 테마를 적용하면 첫 페인트는 light 로 그려졌다가
+       dark 로 깜빡이는 현상이 발생함. 이 inline script 는 <body> 가 파싱되기
+       전에 실행돼서, 사용자가 직전에 선택한 테마를 *첫 페인트 이전에* <html>
+       에 적용함.
+       — try/catch: localStorage 가 막힌 환경 (private mode 등) 에서도 무사 통과
+  ──────────────────────────────────────────────────────────────────── -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('loci.theme') === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark')
+        }
+      } catch (e) { /* noop */ }
+    })()
+  </script>
 </head>
   <body>
     <div id="app"></div>

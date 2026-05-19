@@ -194,8 +194,8 @@ async function handleDelete() {
   margin-bottom: 1.25rem;
 }
 .card--danger {
-  border-color: rgba(220, 100, 100, 0.25);
-  background: rgba(220, 100, 100, 0.02);
+  border-color: var(--danger-border);
+  background: var(--danger-bg);
 }
 .card-title {
   font-family: var(--font-serif);
@@ -232,19 +232,19 @@ async function handleDelete() {
   font-family: var(--font-sans);
   font-size: 13px;
   background: transparent;
-  color: #c66;
+  color: var(--danger-text);
   padding: 9px 18px;
   border-radius: 100px;
-  border: 1px solid #f0d0d0;
+  border: 1px solid var(--danger-border);
   cursor: pointer;
   letter-spacing: 0.02em;
   transition: color 0.15s, border-color 0.15s, background 0.15s;
   white-space: nowrap;
 }
 .btn-danger:hover:not(:disabled) {
-  color: #b04848;
-  border-color: #e0a8a8;
-  background: rgba(220, 100, 100, 0.04);
+  color: var(--danger-text);
+  border-color: var(--danger-text);
+  background: var(--danger-bg);
 }
 .btn-danger:disabled { opacity: 0.4; cursor: not-allowed; }
 
@@ -257,13 +257,13 @@ async function handleDelete() {
   line-height: 1.5;
 }
 .msg--error {
-  color: #c66;
-  background: rgba(220, 100, 100, 0.06);
-  border: 1px solid rgba(220, 100, 100, 0.18);
+  color: var(--danger-text);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
 }
 .msg--ok {
-  color: #2d8a4f;
-  background: rgba(45, 138, 79, 0.06);
-  border: 1px solid rgba(45, 138, 79, 0.18);
+  color: var(--success-text);
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
 }
 </style>
