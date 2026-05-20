@@ -216,13 +216,6 @@ function floatStyle(i) {
 }
 
 onMounted(() => {
-  // ── 백엔드 워밍업 ping (fire-and-forget) ─────────────────────────
-  // Render 무료 티어가 15분 무요청 시 sleep → 첫 요청에 ~30초 cold start.
-  // 사용자가 랜딩 도착 → 페이지 훑는 ~5-10초 동안 백엔드를 미리 깨워두면,
-  // 로그인 클릭 시점엔 이미 warm 상태라 자연스러운 흐름이 됨.
-  // /auth/me 는 cookie 없을 땐 401 반환이라 실패해도 OK — 그저 컨테이너를 깨우는 게 목적.
-  fetch(`${import.meta.env.VITE_API_URL}/auth/me`, { credentials: 'include' }).catch(() => {})
-
   const text = '잊기 전에 남겨두세요'
   let i = 0
   setTimeout(() => {

@@ -1,6 +1,21 @@
 <template>
   <div class="app-root">
-    <nav v-if="!hideNav" class="app-nav">
+    <!-- 부팅 splash — 라우터 가드의 auth.bootstrap() 이 백엔드를 깨우는 동안 노출 -->
+    <!-- Render 무료 티어 cold start (~30-60s) 동안 빈 화면 대신 표시 -->
+    <div v-if="!initialized" class="boot-splash">
+      <LociLogo class="boot-splash-logo" />
+      <div class="loading-dots" aria-label="로딩 중">
+        <span></span><span></span><span></span>
+      </div>
+      <!-- 3초 이상 걸리면 (cold start 가능성 높음) 컨텍스트 안내 -->
+      <p v-if="showColdStartHint" class="boot-splash-hint">
+        잠시만요 — 서버를 깨우는 중이에요.<br />
+        첫 접속에 30초 정도 걸릴 수 있습니다.
+        조금만 기다려주세요.
+      </p>
+    </div>
+
+    <nav v-if="initialized && !hideNav" class="app-nav">
       <div class="app-nav-inner">
         <RouterLink to="/" class="app-nav-logo-link" aria-label="Loci 홈으로">
           <LociLogo class="app-nav-logo" />
@@ -31,14 +46,14 @@
       </div>
     </nav>
 
-    <main :class="['app-main', { 'app-main--padded': !hideNav }]">
+    <main v-if="initialized" :class="['app-main', { 'app-main--padded': !hideNav }]">
       <RouterView />
     </main>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import LociLogo from './components/LociLogo.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
@@ -46,7 +61,16 @@ import { useAuth } from './stores/auth'
 
 const route = useRoute()
 const router = useRouter()
-const { user, isAuthenticated, logout } = useAuth()
+const { user, isAuthenticated, logout, initialized } = useAuth()
+
+// 부팅이 3초 넘게 걸리면 cold start 가능성 → 사용자에게 컨텍스트 안내
+// 무료 티어로 운영 중이라는 사실을 드러내며 기다림이 의도된 것임을 알림
+const showColdStartHint = ref(false)
+onMounted(() => {
+  setTimeout(() => {
+    if (!initialized.value) showColdStartHint.value = true
+  }, 3000)
+})
 
 // Landing / 인증 페이지 자체에 nav 가 있거나 디자인상 글로벌 nav 가 겹쳐서 안 보여야 하는 경로
 const hideNav = computed(() =>
@@ -65,6 +89,41 @@ async function handleLogout() {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-serif);
+}
+
+/* ── 부팅 splash ──────────────────────────────────────────
+   라우터 가드의 auth.bootstrap() 이 백엔드를 깨우는 동안 노출.
+   첫 페인트 직후 즉시 보이도록 inline 스타일과 동일한 변수 사용 →
+   FOUC 방지 inline script 가 미리 적용한 테마 변수 그대로 따라감. */
+.boot-splash {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  background: var(--bg);
+  z-index: 100;
+  animation: bootSplashIn 0.3s ease;
+}
+@keyframes bootSplashIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.boot-splash-logo {
+  height: 36px;
+  color: var(--ink);
+}
+.boot-splash-hint {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--soft);
+  text-align: center;
+  line-height: 1.7;
+  max-width: 28ch;
+  margin-top: 0.5rem;
+  animation: bootSplashIn 0.4s ease;
 }
 
 .app-nav {
