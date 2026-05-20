@@ -29,71 +29,68 @@
 
 ---
 
-## 2. 실행 방법 (Docker)
+## 2. 실행 방법 (로컬 개발)
+
+### 사전 준비
+
+- **Node.js 20+**
+- **PostgreSQL 호스팅** — [Neon](https://neon.tech) 권장 (무료 티어 + serverless). 가입 후 프로젝트 생성하면 `DATABASE_URL` 한 줄을 받음
+- Google Maps / Gemini / AWS S3 키 (선택 — 없어도 핵심 기능 동작)
+
+### 셋업
 
 ```bash
 git clone <repo-url>
 cd loci
 
+# 환경 변수
 cp .env.example .env
 cp frontend/.env.example frontend/.env
-# 필요한 키 채우기 — 아래 "환경 변수" / "키 없이도 동작하는 부분" 참고
-# (.env 의 JWT_SECRET 은 반드시 길고 랜덤한 값으로 채워주세요)
+# 두 파일을 열어 키 채우기 (아래 "환경 변수" 표 참고)
+# JWT_SECRET 은 `openssl rand -hex 64` 로 생성한 값을 사용
 
-docker compose up --build -d
+# 백엔드
+cd backend
+npm install
+npx prisma migrate deploy   # 스키마 적용
+npm run seed                # 데모 사용자 + 시드 데이터 (선택)
+npm run dev                 # http://localhost:3000
 
-# 최초 1회: DB 마이그레이션 + 시드
-docker exec loci_backend_1 npx prisma migrate deploy
-docker exec loci_backend_1 npm run seed
-
-# http://localhost:8080
+# 프론트엔드 (새 터미널)
+cd ../frontend
+npm install
+npm run dev                 # http://localhost:5173
 ```
 
 ### 데모 계정
 
-시드 데이터는 데모 사용자에게 귀속되어 있어요. 별도 가입 없이 바로 둘러보려면:
+시드를 돌리면 데모 사용자가 생성됩니다:
 
 ```
 이메일:   demo@loci.dev
 비밀번호: loci-demo-2026
 ```
 
-> `npm run seed` 가 실행되면 콘솔에도 위 정보가 출력됩니다. 운영 환경에선 시드 자체를 돌리지 마세요.
-
 ### 환경 변수
 
-`.env` 에 채워야 하는 주요 키:
+루트 `.env`:
 
 | 변수 | 설명 |
 |---|---|
-| `DATABASE_URL` | PostgreSQL 연결 문자열 (도커 환경: `postgresql://loci:loci@postgres:5432/loci`) |
-| `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` | postgres 컨테이너 자격 증명 |
-| `POSTGRES_PORT` | 호스트 매핑 포트 (기본 5432, 충돌 시 5433 등) |
-| `JWT_SECRET` | JWT 서명용 비밀키 — `openssl rand -hex 64` 같은 명령으로 충분히 긴 랜덤값. 노출 시 누구나 위장 토큰 생성 가능 |
-| `BACKEND_PORT` / `FRONTEND_PORT` | 호스트 포트 매핑 (기본 3000 / 8080) |
+| `DATABASE_URL` | Neon 등의 PostgreSQL 연결 문자열 (`postgresql://...?sslmode=require`) |
+| `JWT_SECRET` | JWT 서명용 비밀키 — `openssl rand -hex 64` 권장. 노출 시 누구나 위장 토큰 생성 가능 |
+| `BACKEND_PORT` | 백엔드 포트 (기본 3000) |
 | `GEMINI_API_KEY` | AI 컬렉션 분석 |
 | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / `AWS_REGION` / `AWS_S3_BUCKET` | 사진 업로드 |
+| `ALLOWED_ORIGINS` | CORS 화이트리스트 (쉼표 구분) |
+| `FRONTEND_URL` | forgot-password 이메일 링크에 들어갈 프론트엔드 base URL |
 
 `frontend/.env` :
 
 | 변수 | 설명 |
 |---|---|
-| `VITE_API_URL` | 백엔드 API 베이스 URL (기본 `http://localhost:3000/api`) |
+| `VITE_API_URL` | 백엔드 API base URL (기본 `http://localhost:3000/api`) |
 | `VITE_GOOGLE_PLACES_API_KEY` | Google Maps + Places. **빌드 타임에 JS 에 inline 되므로 변경 후 frontend 재빌드 필요** |
-
-### 포트 변경
-
-기본은 backend `3000`, frontend `8080`. `.env` 에서:
-
-```bash
-BACKEND_PORT=3001
-FRONTEND_PORT=8090
-```
-
-`frontend/.env` 의 `VITE_API_URL` 도 일치시킨 후 frontend 재빌드:
-```bash
-docker compose build frontend && docker compose up -d --force-recreate frontend
-```
 
 ### 키 없이도 동작하는 부분
 
@@ -115,9 +112,9 @@ docker compose build frontend && docker compose up -d --force-recreate frontend
 | 프론트엔드 | Vue 3 (Composition API) · Vue Router · Tailwind CSS v4 · Vite |
 | 백엔드 | Node.js · Express 5 · Prisma 7 (+ adapter-pg) · Zod |
 | 인증 | bcrypt + JSON Web Token (httpOnly 쿠키) |
-| 데이터 | PostgreSQL 16 (docker compose + named volume 으로 영속) |
+| 데이터 | PostgreSQL 16 (Neon serverless) |
 | 외부 API | Google Maps JavaScript API (+ Places) · Gemini 2.5 Flash · AWS S3 |
-| 인프라 | Docker Compose · nginx (SPA fallback + 정적 캐시) |
+| 테스트 / CI | Vitest + Supertest · Playwright · GitHub Actions |
 
 ### 디렉터리 구조
 
@@ -139,22 +136,21 @@ loci/
 │   │       ├── upload.js            # S3 이미지 업/다운로드
 │   │       └── ai.js                # Gemini 컬렉션 분석
 │   ├── prisma/
-│   │   ├── schema.prisma            # User / Collection / Place / CollectionProfile
+│   │   ├── schema.prisma            # User / Collection / Place / CollectionProfile / Wishlist / ...
 │   │   ├── migrations/
 │   │   ├── seed.js                  # 데모 사용자 + 시드 데이터 적재
 │   │   └── seed-data.json
-│   └── Dockerfile
-├── frontend/
-│   ├── src/
-│   │   ├── views/                   # Landing / Login / Register / CollectionList / CollectionDetail / CollectionForm
-│   │   ├── components/              # MapView · PlaceCard · PlaceModal · PlaceSearch · AiProfile · LociLogo
-│   │   ├── stores/
-│   │   │   └── auth.js              # 모듈 스코프 ref 기반 auth composable
-│   │   ├── api/index.js             # axios (withCredentials + 401 인터셉터)
-│   │   └── router.js                # 라우트 + beforeEach 가드
-│   ├── nginx.conf
-│   └── Dockerfile
-└── docker-compose.yml
+│   └── tests/                       # vitest + supertest (auth / collections / places / ...)
+└── frontend/
+    ├── src/
+    │   ├── views/                   # Landing / Login / Register / CollectionList / CollectionDetail / ...
+    │   ├── components/              # MapView · PlaceCard · PlaceModal · PlaceSearch · AiProfile · ThemeToggle · ...
+    │   ├── stores/
+    │   │   ├── auth.js              # 모듈 스코프 ref 기반 auth composable
+    │   │   └── theme.js             # light/dark 테마 (localStorage 영속)
+    │   ├── api/index.js             # axios (withCredentials + 401 인터셉터)
+    │   └── router.js                # 라우트 + beforeEach 가드
+    └── tests-e2e/                   # Playwright E2E
 ```
 
 ### 데이터 모델

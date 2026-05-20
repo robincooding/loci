@@ -44,12 +44,16 @@ function verifyToken(token) {
 // ── 쿠키 ─────────────────────────────────────
 // httpOnly: JS 에서 못 읽음 → XSS 공격으로 토큰 탈취 불가
 // sameSite: CSRF 방어 (다른 도메인 form 으로 자동 전송 차단)
-// secure: HTTPS 에서만 전송 (운영 환경)
+//   - 로컬 (HTTP, same-origin): 'lax' 면 충분
+//   - 프로덕션 (HTTPS, cross-origin): frontend / backend 도메인 분리 시 'none' 필수
+//     (loci.vercel.app → loci-api.onrender.com 같은 cross-origin 요청에 cookie 가
+//      함께 가려면 sameSite='none' + secure=true 가 브라우저 요구사항)
+// secure: HTTPS 에서만 전송 (sameSite='none' 일 땐 강제)
 function buildCookieOptions() {
   const isProd = process.env.NODE_ENV === "production";
   return {
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: isProd ? "none" : "lax",
     secure: isProd,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 일 (ms)
     path: "/",

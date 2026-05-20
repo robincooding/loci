@@ -8,7 +8,9 @@
     "start": "node src/index.js",
     "seed": "prisma db seed",
     "migrate": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
     "generate": "prisma generate",
+    "build": "npm install && prisma generate && prisma migrate deploy",
     "test": "vitest run",
     "test:watch": "vitest"
   },
