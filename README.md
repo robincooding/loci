@@ -5,6 +5,18 @@
 
 라틴어 *locus*(장소)의 복수형. `[ˈloʊ.saɪ]` (로사이).
 
+### 🔗 Live Demo
+
+**https://loci-steel.vercel.app**
+
+```
+이메일:   demo@loci.dev
+비밀번호: loci-demo-2026
+```
+
+> 백엔드가 Render 무료 티어라 15분 무요청 시 sleep 됩니다.
+> 첫 접속 시 ~30초 cold start 가 있을 수 있어요.
+
 ---
 
 ## 1. 서비스 소개
@@ -105,7 +117,34 @@ npm run dev                 # http://localhost:5173
 
 ---
 
-## 3. 기술 스택
+## 3. 배포 구성
+
+```
+브라우저
+   │
+   ├─→ https://loci-steel.vercel.app     (Vercel · 정적 SPA)
+   │       │
+   │       │  XHR + httpOnly cookie (cross-origin: SameSite=None; Secure)
+   │       ▼
+   │   https://loci-oz86.onrender.com   (Render · Express 5 + Prisma)
+   │       │
+   │       ├─→ Neon serverless PostgreSQL  (Singapore)
+   │       ├─→ AWS S3                      (이미지 — presigned PUT URL)
+   │       └─→ Google Gemini API           (컬렉션 분석)
+   │
+   └─→ Google Maps JavaScript API          (브라우저 직접 호출, referrer 제한)
+```
+
+| 레이어 | 호스팅 |
+|---|---|
+| Frontend | Vercel (무료 티어, 자동 HTTPS, GitHub push → 자동 배포) |
+| Backend | Render Web Service (무료 티어 — 15분 무요청 시 sleep) |
+| Database | Neon serverless PostgreSQL (무료 티어) |
+| File storage | AWS S3 (직접 PUT — 백엔드 메모리/대역폭 0) |
+
+---
+
+## 4. 기술 스택
 
 | 영역 | 사용 기술 |
 |---|---|
@@ -180,7 +219,7 @@ User ─< Collection ─┬─< Place (N)              — 큐레이션 콘텐�
 
 ---
 
-## 4. 로드맵 / 개선 여지
+## 5. 로드맵 / 개선 여지
 
 지금까지 적용된 개선들:
 - ✅ 사용자 인증 (이메일+비번, JWT, 비밀번호 재설정)
